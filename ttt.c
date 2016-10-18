@@ -75,6 +75,17 @@ void update_board(char board[], char mov, int pos)
 void draw(char board[], int num_col, char current_player, char state)
 {
   printf("\n");
+  switch (state) {
+  case 'w':
+    printf("%c wins!\n", current_player);
+    break;
+  case 't':
+    printf("It's a tie.\n");
+    break;
+  default:
+    printf("%c's turn\n", current_player);
+    break;
+  }
   if (state == 'w') {
     printf("%c wins!\n", current_player);
   } else if (state == 't') {
