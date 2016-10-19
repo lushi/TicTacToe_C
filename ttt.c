@@ -10,7 +10,7 @@
 #define COLOR_MOVE2 "\x1B[34m" /* blue */
 
 void play(char board[], char player);
-int get_move();
+int get_move(void);
 void update_board(char board[], char move, int post);
 void draw(char board[], int num_col, char current_player, char state);
 int input_valid(char board[], int pos);
