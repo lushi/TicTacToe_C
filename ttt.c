@@ -86,13 +86,6 @@ void draw(char board[], int num_col, char current_player, char state)
     printf("%c's turn\n", current_player);
     break;
   }
-  if (state == 'w') {
-    printf("%c wins!\n", current_player);
-  } else if (state == 't') {
-    printf("It's a tie.\n");
-  } else {
-    printf("%c's turn\n", current_player);
-  }
 
   int i, l;
   l = strlen(board);
