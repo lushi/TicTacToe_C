@@ -2,6 +2,7 @@
 #include <string.h>
 
 #define BOARD_SIZE 9
+#define NUM_ROW 3
 #define NUM_COL 3
 #define PLAYER_1 'X'
 #define PLAYER_2 'O'
@@ -9,6 +10,7 @@
 #define COLOR_MOVE1 "\x1B[31m" /* red */
 #define COLOR_MOVE2 "\x1B[34m" /* blue */
 
+void init_board(char** board, int num_row, int num_col);
 void play(char board[], char player);
 int get_move(void);
 void update_board(char board[], char move, int post);
@@ -20,8 +22,12 @@ int check_win(char board[]);
 int main()
 {
   /* init board */
+  char b[NUM_ROW][NUM_COL + 1];
+  init_board((char **)b, NUM_ROW, NUM_COL);
+
   /* Filling the board array with spaces because i'm not sure what else to do */
   char board[BOARD_SIZE+1];
+
   int i;
   for (i=0; i<BOARD_SIZE; i++) {
     board[i] = ' ';
@@ -35,6 +41,18 @@ int main()
   while (!game_over(board, current_player)) {
     current_player = (current_player == PLAYER_1) ? PLAYER_2 : PLAYER_1;
     play(board, current_player);
+  }
+}
+
+/* fill in board with space characters */
+void init_board(char** board, int num_row, int num_col)
+{
+  int i, j;
+  for (i=0; i<num_row; i++) {
+    for (j=0; j<num_col; j++) {
+      board[i][j] = ' ';
+    }
+    board[i][j] = '\0';
   }
 }
 
