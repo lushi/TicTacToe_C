@@ -10,11 +10,13 @@
 #define COLOR_MOVE1 "\x1B[31m" /* red */
 #define COLOR_MOVE2 "\x1B[34m" /* blue */
 
-void init_board(char** board, int num_row, int num_col);
+void init_board(char *board, int num_row, int num_col);
 void play(char board[], char player);
 int get_move(void);
 void update_board(char board[], char move, int post);
 void draw(char board[], int num_col, char current_player, char state);
+void draw_msg(char current_player, char state);
+void draw_board(char *board);
 int input_valid(char board[], int pos);
 int game_over(char board[], char player);
 int check_win(char board[]);
@@ -23,37 +25,69 @@ int main()
 {
   /* init board */
   char b[NUM_ROW][NUM_COL + 1];
-  init_board((char **)b, NUM_ROW, NUM_COL);
-
-  /* Filling the board array with spaces because i'm not sure what else to do */
-  char board[BOARD_SIZE+1];
-
-  int i;
-  for (i=0; i<BOARD_SIZE; i++) {
-    board[i] = ' ';
-  }
-  char current_player = PLAYER_1; /* start with X */
-  // board[BOARD_SIZE + 1] = '\0';
-
-  printf("Let's play Tic Tac Toe!\n");
-  play(board, current_player);
-
-  while (!game_over(board, current_player)) {
-    current_player = (current_player == PLAYER_1) ? PLAYER_2 : PLAYER_1;
-    play(board, current_player);
-  }
+  init_board((char *)b, NUM_ROW, NUM_COL);
+  /* TEST */
+  draw_board((char *)b);
+  // /* Filling the board array with spaces because i'm not sure what else to do */
+  // char board[BOARD_SIZE+1];
+  //
+  // int i;
+  // for (i=0; i<BOARD_SIZE; i++) {
+  //   board[i] = ' ';
+  // }
+  // char current_player = PLAYER_1; /* start with X */
+  // // board[BOARD_SIZE + 1] = '\0';
+  //
+  // printf("Let's play Tic Tac Toe!\n");
+  // play(board, current_player);
+  //
+  // while (!game_over(board, current_player)) {
+  //   current_player = (current_player == PLAYER_1) ? PLAYER_2 : PLAYER_1;
+  //   play(board, current_player);
+  // }
 }
 
 /* fill in board with space characters */
-void init_board(char** board, int num_row, int num_col)
+void init_board(char *board, int num_row, int num_col)
 {
   int i, j;
+  int row_len = num_col + 1;
+
   for (i=0; i<num_row; i++) {
     for (j=0; j<num_col; j++) {
-      board[i][j] = ' ';
+      *(board + j + i * row_len) = ' ';
     }
-    board[i][j] = '\0';
+    *(board + j + i * row_len) = '\n'; // end of row
   }
+
+  *(board + j + (i-1) * row_len) = '\0'; // end of board
+
+}
+
+void draw_board(char *board)
+{
+  int pos = 1; /* first square on board labeled 1 */
+  printf("%s\n|", COLOR_DEF);
+  for (int i = 0; *(board + i) != '\0'; i++) {
+    switch (*(board + i)) {
+    case '\n': /* end of line, print new line */
+      printf("%s%c|", COLOR_DEF, *(board + i));
+      break;
+    case PLAYER_1:
+      pos++;
+      printf("%s%c|", COLOR_MOVE1, *(board + i));
+      break;
+    case PLAYER_2:
+      pos++;
+      printf("%s%c|", COLOR_MOVE2, *(board + i));
+      break;
+    default:
+      printf("%s%d|", COLOR_DEF, pos++); /* print square position # */
+      break;
+    }
+  }
+
+  printf("%s\n", COLOR_DEF);
 }
 
 void play(char board[], char current_player)
@@ -92,6 +126,13 @@ void update_board(char board[], char mov, int pos)
 
 void draw(char board[], int num_col, char current_player, char state)
 {
+  draw_msg(current_player, state);
+  // draw_board(**board, num_row, num_col); /* TEST */
+  printf("\n");
+}
+
+void draw_msg(char current_player, char state)
+{
   printf("\n");
   switch (state) {
   case 'w':
@@ -104,27 +145,6 @@ void draw(char board[], int num_col, char current_player, char state)
     printf("%c's turn\n", current_player);
     break;
   }
-
-  int i, l;
-  l = strlen(board);
-  for (i = 0; i<l; i++) {
-    if (i % num_col == 0)
-      printf("%s\n|", COLOR_DEF);
-
-    if (board[i] == ' ') {
-      printf("%s%d", COLOR_DEF, i+1);
-    } else {
-      /* HACK: should be able to assign COLOR_MOVEX to a var instead */
-      if (board[i] == PLAYER_1)
-        printf("%s%c", COLOR_MOVE1, board[i]);
-      else
-        printf("%s%c", COLOR_MOVE2, board[i]);
-    }
-
-    printf("%s|", COLOR_DEF);
-  }
-
-  printf("\n");
 }
 
 int input_valid(char board[], int pos)
